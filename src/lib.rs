@@ -452,7 +452,7 @@ pub struct AzureJwtClaims {
 
     /// Identifies how the subject of the token was authenticated.
     /// Microsoft identities can authenticate in a variety of ways, which may be relevant to your application
-    pub amr: Option<String>,
+    pub amr: Option<Vec<String>>,
 
     /// Identifies the security token service (STS) that constructs and returns
     /// the token, and the Azure AD tenant in which the user was authenticated.
