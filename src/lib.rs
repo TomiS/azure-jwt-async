@@ -4,10 +4,8 @@
 //! authenticity of a token you provide. It defaults to validating and mapping Azure Id tokens for
 //! you out of the box, but should work with other tokens as well if you use a custom validator.
 //!
-//! It uses `request` with the "blocking" feature to fetch metadata and public
-//! keys, but used correctly it will only update these once a day.
 //!
-//! # Dafault validation
+//! # Default validation
 //!
 //! **There are mainly six conditions a well formed token will need to meet to be validated:**
 //! 1. That the token is issued by Azure and is not tampered with
@@ -30,13 +28,12 @@
 //! fields and more control over the validation.
 //!
 //! # Security
+//!
 //! You will need a private app_id created by Azure for your application to be able to verify that
 //! the token is created for your application (and not anyone with a valid Azure token can log in)
 //! and you will need to authenticate that the user has the right access to your system.
 //!
 //! For more information, see this artice: https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
-//!
-//! # Example
 //!
 //! ```rust
 //! # use azure_jwt_async::*;
@@ -84,13 +81,15 @@
 //! #         chrono::Utc::now().timestamp() + 1000)
 //! # }
 //! #
+//! # use simple_base64::{engine::general_purpose, Engine};
+//! #
 //! # async fn generate_test_token() -> String {
 //! #     let private_key = jwt::EncodingKey::from_base64_secret(PRIVATE_KEY_TEST).unwrap();
 //! #     let test_token_playload = test_token_claims();
 //! #     let test_token_header = test_token_header();
 //! #     let test_token = [
-//! #         base64::encode_config(&test_token_header, base64::URL_SAFE),
-//! #         base64::encode_config(&test_token_playload, base64::URL_SAFE),
+//! #         general_purpose::URL_SAFE.encode(&test_token_header),
+//! #         general_purpose::URL_SAFE.encode(&test_token_playload),
 //! #     ]
 //! #     .join(".");
 //! #     let signature = jwt::crypto::sign(&test_token, &private_key, jwt::Algorithm::RS256).expect("Signed");
@@ -126,30 +125,30 @@
 //! # let decoded_token = az_auth.validate_token(&token).await.expect("validated");
 //! #   assert_eq!(decoded_token.claims.preferred_username, Some("abeli@microsoft.com".to_string()));
 //! # });
-//!
-//!
+//! #
 //! ```
 //!
 //! # Example in webserver
 //!
 //! ```rust, ignore
-//! struct AppState {
-//!     azure_auth: auth::AzureAuth,
-//! }
-//!
-//! pub fn start_web_server(port: &str) -> Result<(), Error> {
-//!
-//!     // since this calls windows api, wrap in Arc<Mutex<_>> and share the validator
-//!     let app_state = Arc::new(Mutex::new(AppState {
-//!         azure_auth: auth::AzureAuth::new("32166c25-5e31-4cfc-a29b-04d0dfdb019a").unwrap(),
-//!     }));
-//!     println!("Starting web server on: http://localhost:8000");
-//!
-//!     server::new(move || app(app_state.clone())).bind(port)?.run();
-//!
-//!     Ok(())
-//! }
+//! # struct AppState {
+//! #    azure_auth: auth::AzureAuth,
+//! # }
+//! #
+//! # pub async fn start_web_server(port: &str) -> Result<(), Error> {
+//! #
+//! #    // since this calls windows api, wrap in Arc<Mutex<_>> and share the validator
+//! #    let app_state = Arc::new(Mutex::new(AppState {
+//! #        azure_auth: auth::AzureAuth::new("32166c25-5e31-4cfc-a29b-04d0dfdb019a").await.unwrap(),
+//! #    }));
+//! #    println!("Starting web server on: http://localhost:8000");
+//! #
+//! #    server::new(move || app(app_state.clone())).bind(port)?.run();
+//! #
+//! #    Ok(())
+//! # }
 //! ```
+
 use async_recursion::async_recursion;
 use chrono::{Duration, Local, NaiveDateTime};
 use jsonwebtoken as jwt;
@@ -258,12 +257,13 @@ impl AzureAuth {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
-    /// use azure_oauth_r1s::*;
-    /// use jsonwebtoken::{Validation, Token};
-    /// use serde::{Seralize, Deserialize};
+    /// ```rust, no_run
+    /// use azure_jwt_async::AzureAuth;
+    /// use jsonwebtoken::{Algorithm, TokenData, Validation};
+    /// use serde::{Deserialize, Serialize};
+    /// use tokio_test::block_on;
     ///
-    /// let mut validator = Validation::new();
+    /// let mut validator = Validation::new(Algorithm::HS256);
     /// validator.leeway = 120;
     ///
     /// #[derive(Serialize, Deserialize)]
@@ -272,9 +272,14 @@ impl AzureAuth {
     ///     roles: Vec<String>,
     /// }
     ///
-    /// let auth = AzureAuth::new(my_client_id_from_azure).unwrap();
+    /// tokio_test::block_on(async {
+    ///     let mut auth = AzureAuth::new("my_client_id_from_azure").await.unwrap();
     ///
-    /// let valid_token: Token<MyClaims>  = auth.validate_custom(some_token, &validator).unwrap();
+    ///     let valid_token: TokenData<MyClaims> = auth
+    ///         .validate_custom("some-token", &validator)
+    ///         .await
+    ///         .unwrap();
+    /// });
     /// ```
     pub async fn validate_custom<T>(
         &mut self,
@@ -608,6 +613,8 @@ type Token<T> = jwt::TokenData<T>;
 
 #[cfg(test)]
 mod tests {
+    use simple_base64::{engine::general_purpose, Engine};
+
     use super::*;
 
     const PUBLIC_KEY_N: &str = "AOx0GOQcSt5AZu02nlGWUuXXppxeV9Cu_9LcgpVBg_WQb-5DBHZpqs8AMek5u5iI4hkHCcOyMbQrBsDIVa9xxZxR2kq_8GtERsnd6NClQimspxT1WVgX5_WCAd5rk__Iv0GocP2c_1CcdT8is2OZHeWQySyQNSgyJYg6Up7kFtYabiCyU5q9tTIHQPXiwY53IGsNvSkqbk-OsdWPT3E4dqp3vNraMqXhuSZ-52kLCHqwPgAsbztfFJxSAEBcp-TS3uNuHeSJwNWjvDKTPy2oMacNpbsKb2gZgzubR6hTjvupRjaQ9SHhXyL9lmSZOpCzz2XJSVRopKUUtB-VGA0qVlk";
@@ -691,8 +698,8 @@ xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
         // we base64 (url-safe-base64) the header and claims and arrange
         // as a jwt payload -> header_as_base64.claims_as_base64
         let test_token = [
-            base64::encode_config(test_token_header, base64::URL_SAFE),
-            base64::encode_config(test_token_payload, base64::URL_SAFE),
+            general_purpose::URL_SAFE.encode(test_token_header),
+            general_purpose::URL_SAFE.encode(test_token_payload),
         ]
         .join(".");
 

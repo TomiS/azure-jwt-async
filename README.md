@@ -68,7 +68,7 @@ You get a verified token parsed for you in return.
 3. If you ask for more information about the user than what is defined in [Microsoft ID tokens reference][link1] you will need
 to make a Struct that maps to all the fields in the token and use the `custom_validation` method.
 
-For more information, see this article: [https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens]
+For more information, see this article: <https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens>
 
 [link1]: https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
 [link2]: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal  

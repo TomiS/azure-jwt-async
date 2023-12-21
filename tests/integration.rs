@@ -1,5 +1,6 @@
 use azure_jwt_async::*;
 use jsonwebtoken as jwt;
+use simple_base64::{engine::general_purpose, Engine};
 
 const PUBLIC_KEY_N: &str = "AOx0GOQcSt5AZu02nlGWUuXXppxeV9Cu_9LcgpVBg_WQb-5DBHZpqs8AMek5u5iI4hkHCcOyMbQrBsDIVa9xxZxR2kq_8GtERsnd6NClQimspxT1WVgX5_WCAd5rk__Iv0GocP2c_1CcdT8is2OZHeWQySyQNSgyJYg6Up7kFtYabiCyU5q9tTIHQPXiwY53IGsNvSkqbk-OsdWPT3E4dqp3vNraMqXhuSZ-52kLCHqwPgAsbztfFJxSAEBcp-TS3uNuHeSJwNWjvDKTPy2oMacNpbsKb2gZgzubR6hTjvupRjaQ9SHhXyL9lmSZOpCzz2XJSVRopKUUtB-VGA0qVlk";
 const PUBLIC_KEY_E: &str = "AQAB";
@@ -73,7 +74,6 @@ fn test_token_claims() -> String {
 // in https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
 fn generate_test_token() -> String {
     let private_key = jwt::EncodingKey::from_base64_secret(PRIVATE_KEY_TEST).expect("priv_key");
-
     // we need to construct the calims in a function since we need to set
     // the expiration relative to current time
     let test_token_payload = test_token_claims();
@@ -82,8 +82,8 @@ fn generate_test_token() -> String {
     // we base64 (url-safe-base64) the header and claims and arrange
     // as a jwt payload -> header_as_base64.claims_as_base64
     let test_token = [
-        base64::encode_config(test_token_header, base64::URL_SAFE),
-        base64::encode_config(test_token_payload, base64::URL_SAFE),
+        general_purpose::URL_SAFE.encode(test_token_header),
+        general_purpose::URL_SAFE.encode(test_token_payload),
     ]
     .join(".");
 

@@ -1,6 +1,6 @@
 [package]
 name = "azure_jwt_async"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Vasco Serrano <main@neffware.com>", "Carl Fredrik Samson <cf@samson.no>"]
 edition = "2021"
 repository = "https://github.com/0xNeffarion/azure-jwt-async"
@@ -9,7 +9,7 @@ readme = "README.md"
 license = "MIT"
 keywords = ["azure", "token", "jwt", "validation", "async"]
 categories = ["authentication"]
-description = "A simple JWT validator for Microsoft Azure Id tokens that is async capable."
+description = "A simple JWT validator for Microsoft Azure tokens that is async capable."
 
 [dependencies]
 jsonwebtoken = { version = "7.2.0", default-features = false }
@@ -20,7 +20,7 @@ async-recursion = { version = "1.0.5" }
 serde-aux = { version = "4.3.1", default-features = false }
 
 [dev-dependencies]
-base64 = "0.13.0"
+simple-base64 = { version = "0.23.2" }
 tokio = { version = "1.35.1", default-features = false, features = ["macros"] }
-tokio-test = "0.4.3"
+tokio-test = { version = "0.4.3" }
 
