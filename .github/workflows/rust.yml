@@ -33,9 +33,11 @@ jobs:
         with:
           command: audit
       - uses: actions-rs/cargo@v1
+        name: Build
         with:
           command: build
       - uses: actions-rs/cargo@v1
+        name: Test
         with:
           command: test
           args: --all-features
