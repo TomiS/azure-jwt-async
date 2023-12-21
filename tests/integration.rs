@@ -53,6 +53,7 @@ fn test_token_claims() -> String {
                 "azp": "6e74172b-be56-4843-9ff4-e66a39bb12e3",
                 "name": "Abe Lincoln",
                 "azpacr": "0",
+                "appidacr": 1,
                 "oid": "690222be-ff1a-4d56-abd1-7e4f7d38e474",
                 "preferred_username": "abeli@microsoft.com",
                 "rh": "I",
@@ -75,20 +76,20 @@ fn generate_test_token() -> String {
 
     // we need to construct the calims in a function since we need to set
     // the expiration relative to current time
-    let test_token_playload = test_token_claims();
+    let test_token_payload = test_token_claims();
     let test_token_header = test_token_header();
 
     // we base64 (url-safe-base64) the header and claims and arrange
     // as a jwt payload -> header_as_base64.claims_as_base64
     let test_token = [
         base64::encode_config(test_token_header, base64::URL_SAFE),
-        base64::encode_config(test_token_playload, base64::URL_SAFE),
+        base64::encode_config(test_token_payload, base64::URL_SAFE),
     ]
     .join(".");
 
     // we create the signature using our private key
     let signature =
-        jwt::crypto::sign(&test_token, &private_key, jwt::Algorithm::RS256).expect("Singed.");
+        jwt::crypto::sign(&test_token, &private_key, jwt::Algorithm::RS256).expect("Signed");
 
     // we construct a complete token which looks like: header.claims.signature
     let complete_token = format!("{}.{}", test_token, signature);

@@ -30,7 +30,7 @@
 //! fields and more control over the validation.
 //!
 //! # Security
-//! You will need a private app_id created by Azure for your application to be able to veriify that
+//! You will need a private app_id created by Azure for your application to be able to verify that
 //! the token is created for your application (and not anyone with a valid Azure token can log in)
 //! and you will need to authenticate that the user has the right access to your system.
 //!
@@ -42,9 +42,11 @@
 //! # use azure_jwt_async::*;
 //! # use jsonwebtoken as jwt;
 //! # use tokio_test::block_on;
+//! #
 //! # const PUBLIC_KEY_N: &str = "AOx0GOQcSt5AZu02nlGWUuXXppxeV9Cu_9LcgpVBg_WQb-5DBHZpqs8AMek5u5iI4hkHCcOyMbQrBsDIVa9xxZxR2kq_8GtERsnd6NClQimspxT1WVgX5_WCAd5rk__Iv0GocP2c_1CcdT8is2OZHeWQySyQNSgyJYg6Up7kFtYabiCyU5q9tTIHQPXiwY53IGsNvSkqbk-OsdWPT3E4dqp3vNraMqXhuSZ-52kLCHqwPgAsbztfFJxSAEBcp-TS3uNuHeSJwNWjvDKTPy2oMacNpbsKb2gZgzubR6hTjvupRjaQ9SHhXyL9lmSZOpCzz2XJSVRopKUUtB-VGA0qVlk";
 //! # const PUBLIC_KEY_E: &str = "AQAB";
 //! # const PRIVATE_KEY_TEST: &str = "MIIEowIBAAKCAQEA7HQY5BxK3kBm7TaeUZZS5demnF5X0K7/0tyClUGD9ZBv7kMEdmmqzwAx6Tm7mIjiGQcJw7IxtCsGwMhVr3HFnFHaSr/wa0RGyd3o0KVCKaynFPVZWBfn9YIB3muT/8i/Qahw/Zz/UJx1PyKzY5kd5ZDJLJA1KDIliDpSnuQW1hpuILJTmr21MgdA9eLBjncgaw29KSpuT46x1Y9PcTh2qne82toypeG5Jn7naQsIerA+ACxvO18UnFIAQFyn5NLe424d5InA1aO8MpM/Lagxpw2luwpvaBmDO5tHqFOO+6lGNpD1IeFfIv2WZJk6kLPPZclJVGikpRS0H5UYDSpWWQIDAQABAoIBAQC982Yrmi7q7IHC/qWglUpzKhLGe2PAWVVaZ5rfnIoNs8K3fU8QcUKumFGAMsjpeM1pnaXSeExFmGsMY+Ox1YwSUA81DYxuH6Ned86YDqpgIDr5M0Ba7JmDOLWXoIR8byB19oMOuhjBAW+PEKlb0Z2a1f1Gt3J8oAxWq8PDsShHRdjyesVS36QZpIgjZskcNws/zqqqDRrLWuLmAvk6E+tMD6sqo9xpzEqHF7rmwtt5yAtM1oZdWoEg2O+wZH5DBX2GhLlNZi/8sIiFMo+jouQn+l6Qc4G65vnnoZ+yEuf9fTJPnTHBFMViUcmTPsdbD4eLfrRXwAE9GYrvR/RVusABAoGBAPgsQ4kAChpzU2aP21NQV1XTBW+eoHVbcJoYuOlmwB6x5o8lDUz/EQVVYZavfNY1AjhEkfltCDjm1GHyWofrtGKTy7DHSZwPw5CxuqDtaiC6PMpFEu+Oxa09s7IZxpgInlrhY5JskOkH495BQ0xIU8UDxuP6sdtVNeQmWGjKG7kBAoGBAPPpNid4QEV4XleyAXT/JQGugdpa7TirWOEATNo10YPPqz7GphRhucT0ipNKMi/0XKh3U0IC7XxjUvtE2LP9TVGAcV/Wzi4EYp1fziFuF9QcUds2tJ60SpfgIQrmVcF1zHxn4/mSABoIyFxZSb4Tq9f+KXPAO5/l0NjgrVwk6gVZAoGAbMVZxE4UH4u0XhtnEZkA7kjS9R0dTtKJA8EaKpIyWkG2v76JmdmhaCkH4LeBi5EoK+lB4YR8OhRRuawzKaeRJDOK7ywpgxEVsfFzzty/yyBVTIIBzqVQ1qFYhRLvC+ubHFH1BlQ3HyuqH9uS13hL3unM3lceZPdv61MzJJqQlAECgYAWg0MFV5sPDnIexAZQZzBiPFot7lCQ93fHpMBzL557/RIARFOV9AMyg6O6vpFtTa+zuPfNUvnajkxddthNnKajTCiqwOfc5Xi4r9wVx9SZNlfz1NPNBjUQWZaTK/lkVtwd63TmVyx9OqxLoc4lpikpUYM/9NFMC+k/61T0+U9EWQKBgCdZV3yxwkz3pi6/E40EXfUsj8HQG/UtFJGeUNQiysBrxTmtmwLyvJeCGruG96j1JcehpbcWKV+ObyMQuk65dM94uM7Wa+2NCA/MvorVcU7wdPbq7/eczZU4xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
+//! #
 //! # fn test_token_header() -> String {
 //! #     format!(
 //! #         r#"{{
@@ -54,6 +56,7 @@
 //! #             }}"#
 //! #     )
 //! # }
+//! #
 //! # fn test_token_claims() -> String {
 //! #     format!(
 //! #             r#"{{
@@ -66,6 +69,7 @@
 //! #                 "azp": "6e74172b-be56-4843-9ff4-e66a39bb12e3",
 //! #                 "name": "Abe Lincoln",
 //! #                 "azpacr": "0",
+//! #                 "appidacr": 1,
 //! #                 "oid": "690222be-ff1a-4d56-abd1-7e4f7d38e474",
 //! #                 "preferred_username": "abeli@microsoft.com",
 //! #                 "rh": "I",
@@ -79,6 +83,7 @@
 //! #         chrono::Utc::now().timestamp() - 2000,
 //! #         chrono::Utc::now().timestamp() + 1000)
 //! # }
+//! #
 //! # async fn generate_test_token() -> String {
 //! #     let private_key = jwt::EncodingKey::from_base64_secret(PRIVATE_KEY_TEST).unwrap();
 //! #     let test_token_playload = test_token_claims();
@@ -102,24 +107,25 @@
 //! #     complete_token
 //! # }
 //! #
-//!
-//! tokio_test::block_on(async {
+//! #
+//! #
+//! # tokio_test::block_on(async {
 //! # let token = generate_test_token().await;
 //! # let n: &str = "AOx0GOQcSt5AZu02nlGWUuXXppxeV9Cu_9LcgpVBg_WQb-5DBHZpqs8AMek5u5iI4hkHCcOyMbQrBsDIVa9xxZxR2kq_8GtERsnd6NClQimspxT1WVgX5_WCAd5rk__Iv0GocP2c_1CcdT8is2OZHeWQySyQNSgyJYg6Up7kFtYabiCyU5q9tTIHQPXiwY53IGsNvSkqbk-OsdWPT3E4dqp3vNraMqXhuSZ-52kLCHqwPgAsbztfFJxSAEBcp-TS3uNuHeSJwNWjvDKTPy2oMacNpbsKb2gZgzubR6hTjvupRjaQ9SHhXyL9lmSZOpCzz2XJSVRopKUUtB-VGA0qVlk";
 //! # let e: &str = "AQAB";
-//!
+//! #
 //! # let key = Jwk {
 //! #         kid: "i6lGk3FZzxRcUb2C3nEQ7syHJlY".to_string(),
 //! #         n: n.to_string(),
 //! #         e: e.to_string(),
 //! #     };
 //! #
-//! #    let mut az_auth = AzureAuth::new("6e74172b-be56-4843-9ff4-e66a39bb12e3").await.unwrap();
+//! # let mut az_auth = AzureAuth::new("6e74172b-be56-4843-9ff4-e66a39bb12e3").await.unwrap();
 //! #     az_auth.set_public_keys(vec![key]);
-//!
-//!     let decoded_token = az_auth.validate_token(&token).await.expect("validated");
-//!     assert_eq!(decoded_token.claims.preferred_username, Some("abeli@microsoft.com".to_string()));
-//! });
+//! #
+//! # let decoded_token = az_auth.validate_token(&token).await.expect("validated");
+//! #   assert_eq!(decoded_token.claims.preferred_username, Some("abeli@microsoft.com".to_string()));
+//! # });
 //!
 //!
 //! ```
@@ -153,6 +159,7 @@ use serde::{Deserialize, Serialize};
 
 mod error;
 pub use error::AuthErr;
+use serde_aux::field_attributes::deserialize_number_from_string;
 
 const AZ_OPENID_URL: &str =
     "https://login.microsoftonline.com/common/.well-known/openid-configuration";
@@ -405,7 +412,7 @@ pub struct AzureJwtHeader {
     pub kid: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AzureJwtClaims {
     /// dentifies the intended recipient of the token. In id_tokens, the audience
     /// is your app's Application ID, assigned to your app in the Azure portal.
@@ -423,6 +430,26 @@ pub struct AzureJwtClaims {
     /// value is "0". If client ID and client secret are used, the value is "1".
     /// If a client certificate was used for authentication, the value is "2".
     pub azpacr: Option<String>,
+
+    /// The application ID of the client using the token.
+    /// The application can act as itself or on behalf of a user.
+    /// The application ID typically represents an application object, but it
+    /// can also represent a service principal object in Azure AD.
+    pub appid: Option<String>,
+
+    /// The "Authentication context class" claim.
+    /// A value of "0" indicates the end-user authentication did not meet the requirements of ISO/IEC 29115
+    pub acr: Option<String>,
+
+    /// Indicates how the client was authenticated. For a public client, the value is "0".
+    /// If client ID and client secret are used, the value is "1".
+    /// If a client certificate was used for authentication, the value is "2".
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    pub appidacr: u32,
+
+    /// Identifies how the subject of the token was authenticated.
+    /// Microsoft identities can authenticate in a variety of ways, which may be relevant to your application
+    pub amr: Option<String>,
 
     /// Identifies the security token service (STS) that constructs and returns
     /// the token, and the Azure AD tenant in which the user was authenticated.
@@ -448,6 +475,9 @@ pub struct AzureJwtClaims {
     /// tenant 9188040d-6c67-4c5b-b112-36a304b66dad
     pub idp: Option<String>,
 
+    /// The IP address the user authenticated from.
+    pub ipddr: Option<String>,
+
     /// Unix timestamp. The "nbf" (not before) claim identifies the time before
     /// which the JWT MUST NOT be accepted for processing.
     pub nbf: u64,
@@ -470,6 +500,12 @@ pub struct AzureJwtClaims {
     /// authenticity of an access token. For details about performing this
     /// validation, see the OpenID Connect specification.
     pub at_hash: Option<String>,
+
+    /// Provides the last name, surname, or family name of the user as defined on the user object.
+    pub family_name: Option<String>,
+
+    /// Provides the first or given name of the user, as set on the user object.
+    pub given_name: Option<String>,
 
     /// The email claim is present by default for guest accounts that have an
     /// email address. Your app can request the email claim for managed users
@@ -532,6 +568,10 @@ pub struct AzureJwtClaims {
     /// token. This value isn't guaranteed to be unique within a tenant and
     /// should be used only for display purposes. Only issued in v1.0 id_tokens.
     pub unique_name: Option<String>,
+
+    /// The username of the user. May be a phone number, email address, or unformatted string.
+    /// Should only be used for display purposes and providing username hints in reauthentication scenarios.
+    pub upn: Option<String>,
 
     /// Indicates the version of the id_token. Either 1.0 or 2.0.
     pub ver: String,
@@ -619,6 +659,8 @@ xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
                 "exp": {},
                 "aio": "AXQAi/8IAAAAtAaZLo3ChMif6KOnttRB7eBq4/DccQzjcJGxPYy/C3jDaNGxXd6wNIIVGRghNRnwJ1lOcAnNZcjvkoyrFxCttv33140RioOFJ4bCCGVuoCag1uOTT22222gHwLPYQ/uf79QX+0KIijdrmp69RctzmQ==",
                 "azp": "6e74172b-be56-4843-9ff4-e66a39bb12e3",
+                "appid": "6e74172b-be56-4843-9ff4-e66a39bb12e3",
+                "appidacr": "1",
                 "name": "Abe Lincoln",
                 "azpacr": "0",
                 "oid": "690222be-ff1a-4d56-abd1-7e4f7d38e474",
@@ -643,14 +685,14 @@ xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
 
         // we need to construct the calims in a function since we need to set
         // the expiration relative to current time
-        let test_token_playload = test_token_claims();
+        let test_token_payload = test_token_claims();
         let test_token_header = test_token_header();
 
         // we base64 (url-safe-base64) the header and claims and arrange
         // as a jwt payload -> header_as_base64.claims_as_base64
         let test_token = [
             base64::encode_config(test_token_header, base64::URL_SAFE),
-            base64::encode_config(test_token_playload, base64::URL_SAFE),
+            base64::encode_config(test_token_payload, base64::URL_SAFE),
         ]
         .join(".");
 
