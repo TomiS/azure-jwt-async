@@ -1,28 +1,28 @@
 [package]
-name = "azure_jwt"
-version = "0.2.2"
-authors = ["Carl Fredrik Samson <cf@samson.no>"]
-edition = "2018"
-repository = "https://github.com/cfsamson/azure-jwt"
+name = "azure_jwt_async"
+version = "0.3.0"
+authors = ["Vasco Serrano <main@neffware.com>", "Carl Fredrik Samson <cf@samson.no>"]
+edition = "2021"
+repository = "https://github.com/0xNeffarion/azure-jwt-async"
 documentation = "https://docs.rs/azure-jwt/"
 readme = "README.md"
 license = "MIT"
-keywords = ["azure", "token", "jwt", "jwk", "validation"]
+keywords = ["azure", "token", "jwt", "jwk", "validation", "async"]
 categories = ["authentication"]
 description = """
 A simple JWT validator for Microsoft Azure Id tokens.
 """
 
 [dependencies]
-jsonwebtoken = { version = "7.2.0", default-features = false }
-reqwest = {version = "0.11.1", default-features = false, features = ["blocking", "json", "rustls-tls"]}
-serde = { version = "1.0.124", features = ["derive"] }
-chrono = "0.4.19"
+jsonwebtoken = { version = "7.2.0" }
+reqwest = {version = "0.11.23", default-features = false, features = ["json", "rustls-tls"]}
+serde = { version = "1.0.193", features = ["derive"] }
+chrono = "0.4.31"
+async-recursion = "1.0.5"
 
 [dev-dependencies]
 criterion = "0.3.4"
 base64 = "0.13.0"
+tokio = { version = "1.35.1", features = ["full"] }
+tokio-test = "0.4.3"
 
-[[bench]]
-name = "validation"
-harness = false

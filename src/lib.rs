@@ -39,8 +39,9 @@
 //! # Example
 //!
 //! ```rust
-//! use azure_jwt::*;
+//! # use azure_jwt_async::*;
 //! # use jsonwebtoken as jwt;
+//! # use tokio_test::block_on;
 //! # const PUBLIC_KEY_N: &str = "AOx0GOQcSt5AZu02nlGWUuXXppxeV9Cu_9LcgpVBg_WQb-5DBHZpqs8AMek5u5iI4hkHCcOyMbQrBsDIVa9xxZxR2kq_8GtERsnd6NClQimspxT1WVgX5_WCAd5rk__Iv0GocP2c_1CcdT8is2OZHeWQySyQNSgyJYg6Up7kFtYabiCyU5q9tTIHQPXiwY53IGsNvSkqbk-OsdWPT3E4dqp3vNraMqXhuSZ-52kLCHqwPgAsbztfFJxSAEBcp-TS3uNuHeSJwNWjvDKTPy2oMacNpbsKb2gZgzubR6hTjvupRjaQ9SHhXyL9lmSZOpCzz2XJSVRopKUUtB-VGA0qVlk";
 //! # const PUBLIC_KEY_E: &str = "AQAB";
 //! # const PRIVATE_KEY_TEST: &str = "MIIEowIBAAKCAQEA7HQY5BxK3kBm7TaeUZZS5demnF5X0K7/0tyClUGD9ZBv7kMEdmmqzwAx6Tm7mIjiGQcJw7IxtCsGwMhVr3HFnFHaSr/wa0RGyd3o0KVCKaynFPVZWBfn9YIB3muT/8i/Qahw/Zz/UJx1PyKzY5kd5ZDJLJA1KDIliDpSnuQW1hpuILJTmr21MgdA9eLBjncgaw29KSpuT46x1Y9PcTh2qne82toypeG5Jn7naQsIerA+ACxvO18UnFIAQFyn5NLe424d5InA1aO8MpM/Lagxpw2luwpvaBmDO5tHqFOO+6lGNpD1IeFfIv2WZJk6kLPPZclJVGikpRS0H5UYDSpWWQIDAQABAoIBAQC982Yrmi7q7IHC/qWglUpzKhLGe2PAWVVaZ5rfnIoNs8K3fU8QcUKumFGAMsjpeM1pnaXSeExFmGsMY+Ox1YwSUA81DYxuH6Ned86YDqpgIDr5M0Ba7JmDOLWXoIR8byB19oMOuhjBAW+PEKlb0Z2a1f1Gt3J8oAxWq8PDsShHRdjyesVS36QZpIgjZskcNws/zqqqDRrLWuLmAvk6E+tMD6sqo9xpzEqHF7rmwtt5yAtM1oZdWoEg2O+wZH5DBX2GhLlNZi/8sIiFMo+jouQn+l6Qc4G65vnnoZ+yEuf9fTJPnTHBFMViUcmTPsdbD4eLfrRXwAE9GYrvR/RVusABAoGBAPgsQ4kAChpzU2aP21NQV1XTBW+eoHVbcJoYuOlmwB6x5o8lDUz/EQVVYZavfNY1AjhEkfltCDjm1GHyWofrtGKTy7DHSZwPw5CxuqDtaiC6PMpFEu+Oxa09s7IZxpgInlrhY5JskOkH495BQ0xIU8UDxuP6sdtVNeQmWGjKG7kBAoGBAPPpNid4QEV4XleyAXT/JQGugdpa7TirWOEATNo10YPPqz7GphRhucT0ipNKMi/0XKh3U0IC7XxjUvtE2LP9TVGAcV/Wzi4EYp1fziFuF9QcUds2tJ60SpfgIQrmVcF1zHxn4/mSABoIyFxZSb4Tq9f+KXPAO5/l0NjgrVwk6gVZAoGAbMVZxE4UH4u0XhtnEZkA7kjS9R0dTtKJA8EaKpIyWkG2v76JmdmhaCkH4LeBi5EoK+lB4YR8OhRRuawzKaeRJDOK7ywpgxEVsfFzzty/yyBVTIIBzqVQ1qFYhRLvC+ubHFH1BlQ3HyuqH9uS13hL3unM3lceZPdv61MzJJqQlAECgYAWg0MFV5sPDnIexAZQZzBiPFot7lCQ93fHpMBzL557/RIARFOV9AMyg6O6vpFtTa+zuPfNUvnajkxddthNnKajTCiqwOfc5Xi4r9wVx9SZNlfz1NPNBjUQWZaTK/lkVtwd63TmVyx9OqxLoc4lpikpUYM/9NFMC+k/61T0+U9EWQKBgCdZV3yxwkz3pi6/E40EXfUsj8HQG/UtFJGeUNQiysBrxTmtmwLyvJeCGruG96j1JcehpbcWKV+ObyMQuk65dM94uM7Wa+2NCA/MvorVcU7wdPbq7/eczZU4xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
@@ -78,7 +79,7 @@
 //! #         chrono::Utc::now().timestamp() - 2000,
 //! #         chrono::Utc::now().timestamp() + 1000)
 //! # }
-//! # fn generate_test_token() -> String {
+//! # async fn generate_test_token() -> String {
 //! #     let private_key = jwt::EncodingKey::from_base64_secret(PRIVATE_KEY_TEST).unwrap();
 //! #     let test_token_playload = test_token_claims();
 //! #     let test_token_header = test_token_header();
@@ -100,7 +101,10 @@
 //! #     assert!(verified);
 //! #     complete_token
 //! # }
-//! # let token = generate_test_token();
+//! #
+//!
+//! tokio_test::block_on(async {
+//! # let token = generate_test_token().await;
 //! # let n: &str = "AOx0GOQcSt5AZu02nlGWUuXXppxeV9Cu_9LcgpVBg_WQb-5DBHZpqs8AMek5u5iI4hkHCcOyMbQrBsDIVa9xxZxR2kq_8GtERsnd6NClQimspxT1WVgX5_WCAd5rk__Iv0GocP2c_1CcdT8is2OZHeWQySyQNSgyJYg6Up7kFtYabiCyU5q9tTIHQPXiwY53IGsNvSkqbk-OsdWPT3E4dqp3vNraMqXhuSZ-52kLCHqwPgAsbztfFJxSAEBcp-TS3uNuHeSJwNWjvDKTPy2oMacNpbsKb2gZgzubR6hTjvupRjaQ9SHhXyL9lmSZOpCzz2XJSVRopKUUtB-VGA0qVlk";
 //! # let e: &str = "AQAB";
 //!
@@ -109,12 +113,15 @@
 //! #         n: n.to_string(),
 //! #         e: e.to_string(),
 //! #     };
-//!
-//!     let mut az_auth = AzureAuth::new("6e74172b-be56-4843-9ff4-e66a39bb12e3").unwrap();
+//! #
+//! #    let mut az_auth = AzureAuth::new("6e74172b-be56-4843-9ff4-e66a39bb12e3").await.unwrap();
 //! #     az_auth.set_public_keys(vec![key]);
 //!
-//!     let decoded_token = az_auth.validate_token(&token).expect("validated");
+//!     let decoded_token = az_auth.validate_token(&token).await.expect("validated");
 //!     assert_eq!(decoded_token.claims.preferred_username, Some("abeli@microsoft.com".to_string()));
+//! });
+//!
+//!
 //! ```
 //!
 //! # Example in webserver
@@ -137,11 +144,11 @@
 //!     Ok(())
 //! }
 //! ```
-//!
+use async_recursion::async_recursion;
 use chrono::{Duration, Local, NaiveDateTime};
 use jsonwebtoken as jwt;
 use jwt::DecodingKey;
-use reqwest::{self, blocking::Response};
+use reqwest::{self, Response};
 use serde::{Deserialize, Serialize};
 
 mod error;
@@ -163,7 +170,7 @@ const AZ_OPENID_URL: &str =
 ///   calling `set_no_retry()`.
 /// - The timestamps are given a 60s "leeway" to account for time skew between servers
 ///
-/// # Errors:
+/// # Errors
 ///
 /// - If one of Microsofts enpoints for public keys are down
 /// - If the token can't be parsed as a valid Azure token
@@ -193,10 +200,10 @@ impl AzureAuth {
     /// # Errors
     ///
     /// If there is a connection issue to the Microsoft APIs.
-    pub fn new(aud: impl Into<String>) -> Result<Self, AuthErr> {
+    pub async fn new(aud: impl Into<String>) -> Result<Self, AuthErr> {
         Ok(AzureAuth {
             aud_to_val: aud.into(),
-            jwks_uri: AzureAuth::get_jwks_uri()?,
+            jwks_uri: AzureAuth::get_jwks_uri().await?,
             public_keys: None,
             last_refresh: None,
             exp_hours: 24,
@@ -222,13 +229,14 @@ impl AzureAuth {
     }
 
     /// Dafault validation, see `AzureAuth` documentation for the defaults.
-    pub fn validate_token(&mut self, token: &str) -> Result<Token<AzureJwtClaims>, AuthErr> {
+    pub async fn validate_token(&mut self, token: &str) -> Result<Token<AzureJwtClaims>, AuthErr> {
         let mut validator = jwt::Validation::new(jwt::Algorithm::RS256);
 
         // exp, nbf, iat is set to validate as default
         validator.leeway = 60;
         validator.set_audience(&[&self.aud_to_val]);
-        let decoded: Token<AzureJwtClaims> = self.validate_token_authenticity(token, &validator)?;
+        let decoded: Token<AzureJwtClaims> =
+            self.validate_token_authenticity(token, &validator).await?;
 
         Ok(decoded)
     }
@@ -261,8 +269,7 @@ impl AzureAuth {
     ///
     /// let valid_token: Token<MyClaims>  = auth.validate_custom(some_token, &validator).unwrap();
     /// ```
-    ///
-    pub fn validate_custom<T>(
+    pub async fn validate_custom<T>(
         &mut self,
         token: &str,
         validator: &jwt::Validation,
@@ -270,11 +277,12 @@ impl AzureAuth {
     where
         for<'de> T: Serialize + Deserialize<'de>,
     {
-        let decoded: Token<T> = self.validate_token_authenticity(token, &validator)?;
+        let decoded: Token<T> = self.validate_token_authenticity(token, validator).await?;
         Ok(decoded)
     }
 
-    fn validate_token_authenticity<T>(
+    #[async_recursion]
+    async fn validate_token_authenticity<T>(
         &mut self,
         token: &str,
         validator: &jwt::Validation,
@@ -284,7 +292,7 @@ impl AzureAuth {
     {
         // if we´re in offline, we never refresh the keys. It's up to the user to do that.
         if !self.is_keys_valid() && !self.is_offline {
-            self.refresh_pub_keys()?;
+            self.refresh_pub_keys().await?;
         }
         // does not validate the token!
         let decoded = jwt::decode_header(token)?;
@@ -302,9 +310,9 @@ impl AzureAuth {
                 // the first time this happens let's go and refresh the keys and try once more.
                 // It could be that our keys are out of date. Limit to once in an hour.
                 if self.should_retry() {
-                    self.refresh_pub_keys()?;
+                    self.refresh_pub_keys().await?;
                     self.retry_counter += 1;
-                    self.validate_token(token)?;
+                    self.validate_token(token).await?;
                     unreachable!()
                 } else {
                     self.retry_counter = 0;
@@ -320,7 +328,7 @@ impl AzureAuth {
         };
 
         let key = DecodingKey::from_rsa_components(auth_key.modulus(), auth_key.exponent());
-        let valid: Token<T> = jwt::decode(token, &key, &validator)?;
+        let valid: Token<T> = jwt::decode(token, &key, validator)?;
 
         Ok(valid)
     }
@@ -355,9 +363,9 @@ impl AzureAuth {
         }
     }
 
-    fn refresh_pub_keys(&mut self) -> Result<(), AuthErr> {
-        let resp: Response = reqwest::blocking::get(&self.jwks_uri)?;
-        let resp: JwkSet = resp.json()?;
+    async fn refresh_pub_keys(&mut self) -> Result<(), AuthErr> {
+        let resp: Response = reqwest::get(&self.jwks_uri).await?;
+        let resp: JwkSet = resp.json().await?;
         self.last_refresh = Some(Local::now().naive_local());
         self.public_keys = Some(resp.keys);
         Ok(())
@@ -367,14 +375,14 @@ impl AzureAuth {
     /// document. See: https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
     /// Usually, this is not needed but for some cases you might want to try
     /// to fetch a new uri on receiving an error.
-    pub fn refresh_rwks_uri(&mut self) -> Result<(), AuthErr> {
-        self.jwks_uri = AzureAuth::get_jwks_uri()?;
+    pub async fn refresh_rwks_uri(&mut self) -> Result<(), AuthErr> {
+        self.jwks_uri = AzureAuth::get_jwks_uri().await?;
         Ok(())
     }
 
-    fn get_jwks_uri() -> Result<String, AuthErr> {
-        let resp: Response = reqwest::blocking::get(AZ_OPENID_URL)?;
-        let resp: OpenIdResponse = resp.json()?;
+    async fn get_jwks_uri() -> Result<String, AuthErr> {
+        let resp: Response = reqwest::get(AZ_OPENID_URL).await?;
+        let resp: OpenIdResponse = resp.json().await?;
 
         Ok(resp.jwks_uri)
     }
@@ -593,13 +601,12 @@ GruG96j1JcehpbcWKV+ObyMQuk65dM94uM7Wa+2NCA/MvorVcU7wdPbq7/eczZU4\
 xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
 
     fn test_token_header() -> String {
-        format!(
-            r#"{{
+        r#"{
                 "typ": "JWT",
                 "alg": "RS256",
                 "kid": "i6lGk3FZzxRcUb2C3nEQ7syHJlY"
-            }}"#
-        )
+            }"#
+        .to_string()
     }
 
     fn test_token_claims() -> String {
@@ -642,8 +649,8 @@ xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
         // we base64 (url-safe-base64) the header and claims and arrange
         // as a jwt payload -> header_as_base64.claims_as_base64
         let test_token = [
-            base64::encode_config(&test_token_header, base64::URL_SAFE),
-            base64::encode_config(&test_token_playload, base64::URL_SAFE),
+            base64::encode_config(test_token_header, base64::URL_SAFE),
+            base64::encode_config(test_token_playload, base64::URL_SAFE),
         ]
         .join(".");
 
@@ -673,8 +680,8 @@ xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
         complete_token
     }
 
-    #[test]
-    fn decode_token() {
+    #[tokio::test]
+    async fn decode_token() {
         let token = generate_test_token();
 
         // we need to construct our own key object that matches on `kid` field
@@ -692,31 +699,31 @@ xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
         let mut az_auth =
             AzureAuth::new_offline("6e74172b-be56-4843-9ff4-e66a39bb12e3", vec![key]).unwrap();
 
-        az_auth.validate_token(&token).unwrap();
+        az_auth.validate_token(&token).await.unwrap();
     }
 
     // TODO: we need a test for the retry operation.
 
-    #[test]
-    fn refresh_rwks_uri() {
-        let _az_auth = AzureAuth::new("app_secret").unwrap();
+    #[tokio::test]
+    async fn refresh_rwks_uri() {
+        let _az_auth = AzureAuth::new("app_secret").await.unwrap();
     }
 
-    #[test]
-    fn azure_ad_get_public_keys() {
-        let mut az_auth = AzureAuth::new("app_secret").unwrap();
-        az_auth.refresh_pub_keys().unwrap();
+    #[tokio::test]
+    async fn azure_ad_get_public_keys() {
+        let mut az_auth = AzureAuth::new("app_secret").await.unwrap();
+        az_auth.refresh_pub_keys().await.unwrap();
     }
 
-    #[test]
-    fn azure_ad_get_refresh_rwks_uri() {
-        let mut az_auth = AzureAuth::new("app_secret").unwrap();
-        az_auth.refresh_rwks_uri().unwrap();
+    #[tokio::test]
+    async fn azure_ad_get_refresh_rwks_uri() {
+        let mut az_auth = AzureAuth::new("app_secret").await.unwrap();
+        az_auth.refresh_rwks_uri().await.unwrap();
     }
 
-    #[test]
-    fn is_not_valid_more_than_24h() {
-        let mut az_auth = AzureAuth::new("app_secret").unwrap();
+    #[tokio::test]
+    async fn is_not_valid_more_than_24h() {
+        let mut az_auth = AzureAuth::new("app_secret").await.unwrap();
         az_auth.last_refresh = Some(Local::now().naive_local() - Duration::hours(25));
 
         assert!(!az_auth.is_keys_valid());

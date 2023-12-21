@@ -1,4 +1,4 @@
-use azure_jwt::*;
+use azure_jwt_async::*;
 use jsonwebtoken as jwt;
 
 const PUBLIC_KEY_N: &str = "AOx0GOQcSt5AZu02nlGWUuXXppxeV9Cu_9LcgpVBg_WQb-5DBHZpqs8AMek5u5iI4hkHCcOyMbQrBsDIVa9xxZxR2kq_8GtERsnd6NClQimspxT1WVgX5_WCAd5rk__Iv0GocP2c_1CcdT8is2OZHeWQySyQNSgyJYg6Up7kFtYabiCyU5q9tTIHQPXiwY53IGsNvSkqbk-OsdWPT3E4dqp3vNraMqXhuSZ-52kLCHqwPgAsbztfFJxSAEBcp-TS3uNuHeSJwNWjvDKTPy2oMacNpbsKb2gZgzubR6hTjvupRjaQ9SHhXyL9lmSZOpCzz2XJSVRopKUUtB-VGA0qVlk";
@@ -32,13 +32,12 @@ const PRIVATE_KEY_TEST: &str = "MIIEowIBAAKCAQEA7HQY5BxK3kBm7TaeUZZS5demnF5X0K7/
 
 // Token taken from microsoft docs: https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
 fn test_token_header() -> String {
-    format!(
-        r#"{{
+    r#"{
                 "typ": "JWT",
                 "alg": "RS256",
                 "kid": "i6lGk3FZzxRcUb2C3nEQ7syHJlY"
-            }}"#
-    )
+            }"#
+    .to_string()
 }
 
 // Token taken from microsift docs: https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens
@@ -82,8 +81,8 @@ fn generate_test_token() -> String {
     // we base64 (url-safe-base64) the header and claims and arrange
     // as a jwt payload -> header_as_base64.claims_as_base64
     let test_token = [
-        base64::encode_config(&test_token_header, base64::URL_SAFE),
-        base64::encode_config(&test_token_playload, base64::URL_SAFE),
+        base64::encode_config(test_token_header, base64::URL_SAFE),
+        base64::encode_config(test_token_playload, base64::URL_SAFE),
     ]
     .join(".");
 
@@ -97,8 +96,8 @@ fn generate_test_token() -> String {
     complete_token
 }
 
-#[test]
-fn decode_token() {
+#[tokio::test]
+async fn decode_token() {
     let token = generate_test_token();
     // we need to construct our own key object that matches on `kid` field
     // just as it should if we used the fetched keys from microsofts servers.
@@ -108,9 +107,11 @@ fn decode_token() {
         e: PUBLIC_KEY_E.to_string(),
     };
 
-    let mut az_auth = AzureAuth::new("6e74172b-be56-4843-9ff4-e66a39bb12e3").unwrap();
+    let mut az_auth = AzureAuth::new("6e74172b-be56-4843-9ff4-e66a39bb12e3")
+        .await
+        .unwrap();
     // We manually overwrite the keys so we use the ones we have for testing
     az_auth.set_public_keys(vec![key]);
 
-    az_auth.validate_token(&token).expect("validated");
+    az_auth.validate_token(&token).await.expect("validated");
 }
