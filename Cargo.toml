@@ -7,9 +7,9 @@ repository = "https://github.com/0xNeffarion/azure-jwt-async"
 documentation = "https://docs.rs/azure-jwt-async/"
 readme = "README.md"
 license = "MIT"
-keywords = ["azure", "token", "jwt", "jwk", "validation", "async"]
+keywords = ["azure", "token", "jwt", "validation", "async"]
 categories = ["authentication"]
-description = "A simple JWT validator for Microsoft Azure Id tokens."
+description = "A simple JWT validator for Microsoft Azure Id tokens that is async capable."
 
 [dependencies]
 jsonwebtoken = { version = "7.2.0", default-features = false }
