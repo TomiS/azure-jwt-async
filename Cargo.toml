@@ -1,6 +1,6 @@
 [package]
 name = "azure_jwt_async"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["Vasco Serrano <main@neffware.com>", "Carl Fredrik Samson <cf@samson.no>"]
 edition = "2021"
 repository = "https://github.com/0xNeffarion/azure-jwt-async"

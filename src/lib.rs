@@ -66,7 +66,6 @@
 //! #                 "azp": "6e74172b-be56-4843-9ff4-e66a39bb12e3",
 //! #                 "name": "Abe Lincoln",
 //! #                 "azpacr": "0",
-//! #                 "appidacr": 1,
 //! #                 "oid": "690222be-ff1a-4d56-abd1-7e4f7d38e474",
 //! #                 "preferred_username": "abeli@microsoft.com",
 //! #                 "rh": "I",
@@ -156,7 +155,6 @@ use serde::{Deserialize, Serialize};
 
 mod error;
 pub use error::AuthErr;
-use serde_aux::field_attributes::deserialize_number_from_string;
 
 const AZ_OPENID_URL: &str =
     "https://login.microsoftonline.com/common/.well-known/openid-configuration";
@@ -444,12 +442,6 @@ pub struct AzureJwtClaims {
     /// A value of "0" indicates the end-user authentication did not meet the requirements of ISO/IEC 29115
     pub acr: Option<String>,
 
-    /// Indicates how the client was authenticated. For a public client, the value is "0".
-    /// If client ID and client secret are used, the value is "1".
-    /// If a client certificate was used for authentication, the value is "2".
-    #[serde(deserialize_with = "deserialize_number_from_string")]
-    pub appidacr: u32,
-
     /// Identifies how the subject of the token was authenticated.
     /// Microsoft identities can authenticate in a variety of ways, which may be relevant to your application
     pub amr: Option<Vec<String>>,
@@ -665,7 +657,6 @@ xMd+OWT6JsInVM1ASh1mcn+Q0/Z3WqxxetCQLqaMs+FATn059dGf";
                 "aio": "AXQAi/8IAAAAtAaZLo3ChMif6KOnttRB7eBq4/DccQzjcJGxPYy/C3jDaNGxXd6wNIIVGRghNRnwJ1lOcAnNZcjvkoyrFxCttv33140RioOFJ4bCCGVuoCag1uOTT22222gHwLPYQ/uf79QX+0KIijdrmp69RctzmQ==",
                 "azp": "6e74172b-be56-4843-9ff4-e66a39bb12e3",
                 "appid": "6e74172b-be56-4843-9ff4-e66a39bb12e3",
-                "appidacr": "1",
                 "name": "Abe Lincoln",
                 "azpacr": "0",
                 "oid": "690222be-ff1a-4d56-abd1-7e4f7d38e474",
